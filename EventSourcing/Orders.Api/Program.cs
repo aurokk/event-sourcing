@@ -1,14 +1,14 @@
-using Cassandra;
 using EventStore.Client;
+using Orders.Api;
 using Orders.Api.Commands.AddToCart;
 using Orders.Api.Commands.Checkout;
 using Orders.Api.Commands.Create;
 using Orders.Api.Commands.DeleteFromCart;
 using Orders.Api.Queries.Get;
-using Orders.DataAccess;
 using Orders.DataAccess.Write;
 using Orders.Domain;
 using Orders.PaymentsClient;
+using Raven.Client.Documents;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -22,6 +22,15 @@ services
 
 services
     .AddScoped<IOrdersRepository, OrdersRepository>();
+
+services
+    .AddScoped<Orders.DataAccess.Read.IOffsetsRepository, Orders.DataAccess.Read.OffsetsRepository>()
+    .AddScoped<Orders.DataAccess.Read.IOrdersRepository, Orders.DataAccess.Read.OrdersRepository>();
+
+services
+    .AddHostedService<OrdersProjectionsBackgroundService>()
+    .AddScoped<OrdersProjectionsService>()
+    .AddScoped<IEventProcessor, OrderCreatedProcessor>();
 
 services
     .AddScoped<EventToDomainMapper>()
@@ -40,15 +49,21 @@ services
     });
 
 services
-    .AddSingleton(_ =>
-        // cassandra
-        Cluster
-            .Builder()
-            .AddContactPoint("127.0.0.1:9042")
-            .WithDefaultKeyspace("es")
-            .Build()
-            .Connect()
-    );
+    .AddSingleton<IDocumentStore>(_ =>
+    {
+        // raven
+        var store = new DocumentStore
+        {
+            Urls = new[]
+            {
+                "http://127.0.0.1:8080",
+            },
+            Database = "read",
+            Conventions = { },
+        };
+        store.Initialize();
+        return store;
+    });
 
 services
     .AddSwaggerGen();

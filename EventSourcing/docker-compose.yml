@@ -24,22 +24,22 @@ services:
         source: eventstore-volume-logs
         target: /var/log/eventstore
 
-  cassandra:
-    image: docker.io/bitnami/cassandra:4.0
+  raven:
+    image: ravendb/ravendb:5.4.4-ubuntu.20.04-arm64v8
     ports:
-      - '7100:7000'
-      - '9042:9042'
+      - "8080:8080"
+      - "38888:38888"
+    environment:
+      - RAVEN_Setup_Mode=None
+      - RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork
+      - RAVEN_License_Eula_Accepted=true
     volumes:
       - type: volume
-        source: cassandra_data
-        target: /bitnami
-    environment:
-      - CASSANDRA_SEEDS=cassandra
-      - CASSANDRA_PASSWORD_SEEDER=yes
-      - CASSANDRA_PASSWORD=cassandra
+        source: raven-volume-data
+        target: /opt/RavenDB/Server/RavenData
 
 
 volumes:
   eventstore-volume-data:
   eventstore-volume-logs:
-  cassandra_data:
+  raven-volume-data:

@@ -11,12 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="CassandraCSharpDriver" Version="3.18.0" />
       <PackageReference Include="EventStore.Client.Grpc.Streams" Version="22.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Read" />
+      <PackageReference Include="RavenDB.Client" Version="5.4.4" />
     </ItemGroup>
 
 </Project>
