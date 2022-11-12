@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  eventstore:
+    image: ghcr.io/eventstore/eventstore:21.10.2-alpha-arm64v8
+    restart: always
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: eventstore-volume-logs
+        target: /var/log/eventstore
+
+  cassandra:
+    image: docker.io/bitnami/cassandra:4.0
+    ports:
+      - '7100:7000'
+      - '9042:9042'
+    volumes:
+      - type: volume
+        source: cassandra_data
+        target: /bitnami
+    environment:
+      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+
+
+volumes:
+  eventstore-volume-data:
+  eventstore-volume-logs:
+  cassandra_data:
