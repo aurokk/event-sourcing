@@ -1,0 +1,15 @@
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/bin/Debug/net6.0/Orders.Domain.deps.json
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/bin/Debug/net6.0/Orders.Domain.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/bin/Debug/net6.0/Orders.Domain.pdb
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/bin/Debug/net6.0/Common.Abstractions.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/bin/Debug/net6.0/Common.Abstractions.pdb
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.csproj.AssemblyReference.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.AssemblyInfoInputs.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.AssemblyInfo.cs
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.csproj.CoreCompileInputs.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.csproj.CopyComplete
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/refint/Orders.Domain.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/Orders.Domain.pdb
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.Domain/obj/Debug/net6.0/ref/Orders.Domain.dll

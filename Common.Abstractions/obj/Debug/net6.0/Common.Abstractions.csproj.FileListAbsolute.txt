@@ -1,0 +1,12 @@
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/bin/Debug/net6.0/Common.Abstractions.deps.json
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/bin/Debug/net6.0/Common.Abstractions.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/bin/Debug/net6.0/Common.Abstractions.pdb
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.csproj.AssemblyReference.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.GeneratedMSBuildEditorConfig.editorconfig
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.AssemblyInfoInputs.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.AssemblyInfo.cs
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.csproj.CoreCompileInputs.cache
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/refint/Common.Abstractions.dll
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/Common.Abstractions.pdb
+/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Common.Abstractions/obj/Debug/net6.0/ref/Common.Abstractions.dll

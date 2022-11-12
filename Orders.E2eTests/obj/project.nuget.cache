@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "dgSpecHash": "WcYmNHBWruyZLTkB1ag5lnRKTZaAi5yyquH4qfGqGPiOEHaU4xaJiAEVYCiBzQcdXab73UKmr74EJqGBhTVKuQ==",
+  "success": true,
+  "projectFilePath": "/Users/dima/Repos/aurokk/event-sourcing/Orders.E2eTests/Orders.E2eTests.csproj",
+  "expectedPackageFiles": [
+    "/Users/dima/.nuget/packages/coverlet.collector/3.2.0/coverlet.collector.3.2.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/jetbrains.annotations/2022.3.1/jetbrains.annotations.2022.3.1.nupkg.sha512",
+    "/Users/dima/.nuget/packages/lightbdd.core/3.5.0/lightbdd.core.3.5.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/lightbdd.framework/3.5.0/lightbdd.framework.3.5.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/lightbdd.nunit3/3.5.0/lightbdd.nunit3.3.5.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.codecoverage/17.4.0/microsoft.codecoverage.17.4.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.net.test.sdk/17.4.0/microsoft.net.test.sdk.17.4.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.testplatform.objectmodel/17.4.0/microsoft.testplatform.objectmodel.17.4.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.testplatform.testhost/17.4.0/microsoft.testplatform.testhost.17.4.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/netstandard.library/2.0.0/netstandard.library.2.0.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
+    "/Users/dima/.nuget/packages/nuget.frameworks/5.11.0/nuget.frameworks.5.11.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/nunit/3.13.3/nunit.3.13.3.nupkg.sha512",
+    "/Users/dima/.nuget/packages/nunit.analyzers/3.5.0/nunit.analyzers.3.5.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/nunit3testadapter/4.3.0/nunit3testadapter.4.3.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}
