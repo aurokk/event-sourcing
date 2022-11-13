@@ -55,6 +55,7 @@ public class OrdersProjectionsService
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
     {
         IncludeFields = true,
+        Converters = { new PositionJsonConverter(), },
     };
 
     private FromAll GetPosition()

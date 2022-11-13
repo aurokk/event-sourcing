@@ -4,6 +4,7 @@
     &lt;TestAncestor&gt;
       &lt;TestId&gt;NUnit3x::229C7B89-4B18-4FB6-99D1-834FE728CC12::net6.0::Common.Abstractions.UnitTests.Tests_000.Test_000&lt;/TestId&gt;
       &lt;TestId&gt;NUnit3x::E4452E1D-4D9E-4970-9CDC-3EA967C268BE::net6.0::Orders.E2eTests.Tests_000.Test_000&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::E4452E1D-4D9E-4970-9CDC-3EA967C268BE::net6.0::Orders.E2eTests.Tests_000&lt;/TestId&gt;
     &lt;/TestAncestor&gt;
     &lt;Project Location="/Users/dima/Repos/aurokk/event-sourcing/EventSourcing/Orders.E2eTests" Presentation="&amp;lt;Orders.E2eTests&amp;gt;" /&gt;
   &lt;/Or&gt;
