@@ -4,6 +4,7 @@ using Orders.Api.Commands.AddToCart;
 using Orders.Api.Commands.Checkout;
 using Orders.Api.Commands.Create;
 using Orders.Api.Commands.DeleteFromCart;
+using Orders.Api.OrdersProjections;
 using Orders.Api.Queries.Get;
 using Orders.DataAccess.Write;
 using Orders.Domain;
@@ -30,11 +31,19 @@ services
 services
     .AddHostedService<OrdersProjectionsBackgroundService>()
     .AddScoped<OrdersProjectionsService>()
-    .AddScoped<IEventProcessor, OrderCreatedProcessor>();
+    .AddScoped<IEventProcessor, OrderCreatedProcessor>()
+    .AddScoped<IEventProcessor, ItemAddedToCartProcessor>()
+    .AddScoped<IEventProcessor, ItemDeletedFromCartProcessor>()
+    .AddScoped<IEventProcessor, OrderPlacedProcessor>()
+    .AddScoped<IEventProcessor, OrderPaidProcessor>();
 
 services
     .AddScoped<EventToDomainMapper>()
-    .AddScoped<ISpecificEventToDomainMapper, OrderCreatedToDomainMapper>();
+    .AddScoped<ISpecificEventToDomainMapper, OrderCreatedToDomainMapper>()
+    .AddScoped<ISpecificEventToDomainMapper, ItemAddedToCartToDomainMapper>()
+    .AddScoped<ISpecificEventToDomainMapper, ItemDeletedFromCartToDomainMapper>()
+    .AddScoped<ISpecificEventToDomainMapper, OrderPaidToDomainMapper>()
+    .AddScoped<ISpecificEventToDomainMapper, OrderPlacedToDomainMapper>();
 
 services
     .AddScoped<IPaymentsClient, PaymentsClient>();

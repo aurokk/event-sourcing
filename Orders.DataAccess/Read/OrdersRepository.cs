@@ -1,41 +1,73 @@
-using System.Text.Json;
+using Raven.Client.Documents;
 
 namespace Orders.DataAccess.Read;
 
 public class OrdersRepository : IOrdersRepository
 {
-    // private readonly ISession _session;
-    //
-    // public OrderRepository(ISession session) => _session = session;
+    private readonly IDocumentStore _store;
 
-    public async Task Create(Order order, CancellationToken ct)
-    {
-        // var statement = await _session.PrepareAsync("INSERT INTO orders (Id, Data) VALUES (?, ?)");
-        // var data = JsonSerializer.Serialize(order);
-        // await _session.ExecuteAsync(statement.Bind(order.Id, data));
-    }
+    public OrdersRepository(IDocumentStore store) => _store = store;
 
-    public async Task Update(Order order, CancellationToken ct)
+    public Task Create(Order order, CancellationToken ct) =>
+        Store(order, ct);
+
+    public Task Update(Order order, CancellationToken ct) =>
+        Store(order, ct);
+
+    private async Task Store(Order order, CancellationToken ct)
     {
-        // var statement = await _session.PrepareAsync("UPDATE orders SET Data=? WHERE Id=?");
-        // var data = JsonSerializer.Serialize(order);
-        // await _session.ExecuteAsync(statement.Bind(order.Id, data));
+        using var session = _store.OpenAsyncSession();
+        var orderDto = ToDto(order);
+        await session.StoreAsync(
+            entity: orderDto,
+            id: orderDto.Id,
+            changeVector: order.ChangeVector,
+            token: ct
+        );
+        var changeVector = session.Advanced.GetChangeVectorFor(orderDto);
+        order.Commit(changeVector);
+        await session.SaveChangesAsync(ct);
     }
 
     public async Task<Order> Get(string id, CancellationToken ct)
     {
-        // var statement = await _session.PrepareAsync("SELECT Id, Data FROM orders WHERE Id=?");
-        // var results = await _session.ExecuteAsync(statement.Bind(id));
-        // var orderDb = results.SingleOrDefault();
-        // if (orderDb == null)
-        // {
-        //     throw new Exception();
-        // }
-        //
-        // return Order.FromDatabase(
-        //     id: orderDb.GetValue<string>("Id")
-        // );
+        using var session = _store.OpenAsyncSession();
+        var orderDto = await session.LoadAsync<OrderDto>(id, ct);
+        if (orderDto == null)
+        {
+            throw new Exception();
+        }
 
-        throw new NotImplementedException();
+        var changeVector = session.Advanced.GetChangeVectorFor(orderDto);
+        return ToDomain(orderDto, changeVector);
     }
+
+    private static Order ToDomain(OrderDto orderDto, string changeVector) =>
+        Order.FromDatabase(
+            id: orderDto.Id ?? throw new Exception(),
+            changeVector: changeVector,
+            orderStatus: Enum.Parse<OrderStatus>(orderDto.OrderStatus ?? throw new Exception()),
+            cartItems: orderDto.Items?
+                           .Select(x => new CartItem(
+                                   Id: x.Id ?? throw new Exception(),
+                                   ProductId: x.ProductId ?? throw new Exception()
+                               )
+                           )
+                           .ToList() ??
+                       new List<CartItem>()
+        );
+
+    private static OrderDto ToDto(Order order) =>
+        new OrderDto
+        {
+            Id = order.Id,
+            OrderStatus = order.OrderStatus.ToString("G"),
+            Items = order.Cart
+                .Select(x => new CartItemDto
+                {
+                    Id = x.Id,
+                    ProductId = x.ProductId,
+                })
+                .ToList()
+        };
 }

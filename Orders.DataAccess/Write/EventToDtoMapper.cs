@@ -12,6 +12,6 @@ public class EventToDtoMapper
         new(
             Uuid.NewUuid(),
             evt.EventType,
-            JsonSerializer.SerializeToUtf8Bytes(evt)
+            JsonSerializer.SerializeToUtf8Bytes(evt, evt.GetType())
         );
 }

@@ -1,30 +1,8 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using EventStore.Client;
 using Orders.DataAccess.Read;
-using Orders.DataAccess.Write;
-using Orders.Domain;
-using IOrdersRepository = Orders.DataAccess.Read.IOrdersRepository;
 
-namespace Orders.Api;
-
-public class OrdersProjectionsBackgroundService : BackgroundService
-{
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-
-    public OrdersProjectionsBackgroundService(IServiceScopeFactory serviceScopeFactory)
-    {
-        _serviceScopeFactory = serviceScopeFactory;
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        using var scope = _serviceScopeFactory.CreateScope();
-        var serviceProvider = scope.ServiceProvider;
-        var projectionsService = serviceProvider.GetRequiredService<OrdersProjectionsService>();
-        await projectionsService.Run(stoppingToken);
-    }
-}
+namespace Orders.Api.OrdersProjections;
 
 public class OrdersProjectionsService
 {
@@ -91,33 +69,5 @@ public class OrdersProjectionsService
     {
         var value = JsonSerializer.Serialize(position, JsonSerializerOptions);
         _offset?.Update(value);
-    }
-}
-
-public interface IEventProcessor
-{
-    bool CanProcess(EventRecord eventRecord);
-    Task Process(EventRecord eventRecord, CancellationToken ct);
-}
-
-public class OrderCreatedProcessor : IEventProcessor
-{
-    private readonly EventToDomainMapper _mapper;
-    private readonly IOrdersRepository _ordersRepository;
-
-    public OrderCreatedProcessor(EventToDomainMapper mapper, IOrdersRepository ordersRepository)
-    {
-        _mapper = mapper;
-        _ordersRepository = ordersRepository;
-    }
-
-    public bool CanProcess(EventRecord eventRecord) =>
-        eventRecord.EventType == OrderCreated.Type;
-
-    public async Task Process(EventRecord eventRecord, CancellationToken ct)
-    {
-        var domainEvent = _mapper.Map(eventRecord);
-        var order = DataAccess.Read.Order.Create(domainEvent.AggregateId);
-        await _ordersRepository.Create(order, ct);
     }
 }

@@ -3,77 +3,6 @@ using JetBrains.Annotations;
 
 namespace Orders.Domain;
 
-public class OrderCreated : DomainEvent
-{
-    public const string Type = "OrderCreated";
-    public override string EventType => Type;
-
-    public OrderCreated(string aggregateId, DateTime createdAtUtc)
-        : base(aggregateId, createdAtUtc)
-    {
-    }
-}
-
-public class ItemAddedToCart : DomainEvent
-{
-    public const string Type = "ItemAddedToCart";
-    public override string EventType => Type;
-    public string ProductId { get; }
-
-    public ItemAddedToCart(string aggregateId, string productId, DateTime createdAtUtc)
-        : base(aggregateId, createdAtUtc)
-    {
-        ProductId = productId;
-    }
-}
-
-public class ItemDeletedFromCart : DomainEvent
-{
-    public const string Type = "ItemDeletedFromCart";
-    public override string EventType => Type;
-    public string CartItemId { get; }
-
-    public ItemDeletedFromCart(string aggregateId, string cartItemId, DateTime createdAtUtc)
-        : base(aggregateId, createdAtUtc)
-    {
-        CartItemId = cartItemId;
-    }
-}
-
-public class OrderPlaced : DomainEvent
-{
-    public const string Type = "OrderPlaced";
-    public override string EventType => Type;
-    public string PaymentId { get; }
-
-    public OrderPlaced(string aggregateId, string paymentId, DateTime createdAtUtc) : base(aggregateId, createdAtUtc)
-    {
-        PaymentId = paymentId;
-    }
-}
-
-public class OrderPaid : DomainEvent
-{
-    public const string Type = "OrderPaid";
-    public override string EventType => Type;
-
-    public OrderPaid(string aggregateId, DateTime createdAtUtc) : base(aggregateId, createdAtUtc)
-    {
-    }
-}
-
-public class CartItem
-{
-    public string Id { get; }
-    public string ProductId { get; }
-
-    public CartItem(string id, string productId)
-    {
-        Id = id;
-        ProductId = productId;
-    }
-}
-
 public enum OrderStatus
 {
     Uninitialized = 0,
@@ -112,9 +41,12 @@ public class Order : Aggregate
             throw new InvalidOperationException($"Order must be in {nameof(OrderStatus.Initialized)} status");
         }
 
+        var cartItemId = Guid.NewGuid().ToString("N");
+
         var @event = new ItemAddedToCart(
             aggregateId: Id!,
             productId: productId,
+            cartItemId: cartItemId,
             createdAtUtc: utcNow
         );
 
@@ -191,8 +123,7 @@ public class Order : Aggregate
 
     protected void Apply(ItemAddedToCart @event)
     {
-        var cartItemId = Guid.NewGuid().ToString("N");
-        var cartItem = new CartItem(cartItemId, @event.ProductId);
+        var cartItem = new CartItem(@event.CartItemId, @event.ProductId);
         _cart.Add(cartItem);
     }
 

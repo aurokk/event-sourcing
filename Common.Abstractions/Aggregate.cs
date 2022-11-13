@@ -40,7 +40,7 @@ public abstract class Aggregate
 
         if (method == null)
         {
-            throw new ApplicationException($"There is no applicable method Apply({@event.GetType().Name})");
+            throw new Exception($"There is no applicable method Apply({@event.GetType().Name})");
         }
 
         method.Invoke(this, new object[] { @event });
