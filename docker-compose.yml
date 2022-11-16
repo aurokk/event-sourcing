@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  eventstore:
+  orders-eventstore:
     image: ghcr.io/eventstore/eventstore:21.10.2-alpha-arm64v8
     restart: always
     environment:
@@ -18,13 +18,13 @@ services:
       - "2113:2113"
     volumes:
       - type: volume
-        source: eventstore-volume-data
+        source: orders-eventstore-volume-data
         target: /var/lib/eventstore
       - type: volume
-        source: eventstore-volume-logs
+        source: orders-eventstore-volume-logs
         target: /var/log/eventstore
 
-  raven:
+  orders-raven:
     image: ravendb/ravendb:5.4.4-ubuntu.20.04-arm64v8
     ports:
       - "8080:8080"
@@ -35,11 +35,35 @@ services:
       - RAVEN_License_Eula_Accepted=true
     volumes:
       - type: volume
-        source: raven-volume-data
+        source: orders-raven-volume-data
         target: /opt/RavenDB/Server/RavenData
 
+  payments-eventstore:
+    image: ghcr.io/eventstore/eventstore:21.10.2-alpha-arm64v8
+    restart: always
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1123:1113"
+      - "2123:2113"
+    volumes:
+      - type: volume
+        source: payments-eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: payments-eventstore-volume-logs
+        target: /var/log/eventstore
 
 volumes:
-  eventstore-volume-data:
-  eventstore-volume-logs:
-  raven-volume-data:
+  orders-eventstore-volume-data:
+  orders-eventstore-volume-logs:
+  orders-raven-volume-data:
+  payments-eventstore-volume-data:
+  payments-eventstore-volume-logs:

@@ -57,19 +57,37 @@ public class Tests_000Context
         await _httpClient.SendAsync(message);
     }
 
+    private OrderDto? _order;
+
+    public async Task GetOrder()
+    {
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(_ordersGetUri, $"?orderId={_orderId}"),
+        };
+        var response = await _httpClient.SendAsync(request);
+        var result = await ParseResponse<GetOrderResponse>(response);
+        Assert.That(result.Order, Is.Not.Null);
+        _order = result.Order;
+    }
+
     public async Task DeleteItemFromCart()
     {
+        var cartItemId = _order?.Cart?.FirstOrDefault()?.Id ?? throw new ApplicationException();
+
         var request = new HttpRequestMessage
         {
             Content = CreateJsonContent(new
             {
                 OrderId = _orderId,
-                CartItemId = "",
+                CartItemId = cartItemId,
             }),
             Method = HttpMethod.Post,
             RequestUri = _ordersDeleteFromCartUri,
         };
-        var response = await _httpClient.SendAsync(request);
+
+        await _httpClient.SendAsync(request);
     }
 
     public async Task Checkout()
@@ -98,10 +116,30 @@ public class Tests_000Context
     }
 }
 
-[UsedImplicitly]
+[PublicAPI]
 public class CreateOrderResponse
 {
     public string? OrderId { get; set; }
+}
+
+[PublicAPI]
+public class CartItemDto
+{
+    public string? Id { get; set; }
+    public string? ProductId { get; set; }
+}
+
+[PublicAPI]
+public class OrderDto
+{
+    public string? Id { get; set; }
+    public CartItemDto[]? Cart { get; set; }
+}
+
+[PublicAPI]
+public class GetOrderResponse
+{
+    public OrderDto? Order { get; set; }
 }
 
 public class Tests_000 : FeatureFixture
@@ -113,7 +151,14 @@ public class Tests_000 : FeatureFixture
             .WithContext<Tests_000Context>()
             .RunScenarioAsync(
                 c => c.CreateOrder(),
-                c => c.AddItemToCart()
+                c => c.AddItemToCart(),
+                c => c.AddItemToCart(),
+                c => c.AddItemToCart(),
+                c => c.AddItemToCart(),
+                c => Task.Delay(1000),
+                c => c.GetOrder(),
+                c => c.DeleteItemFromCart(),
+                c => c.Checkout()
             );
     }
 }

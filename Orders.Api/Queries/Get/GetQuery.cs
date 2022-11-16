@@ -6,7 +6,9 @@ public record GetRequest(string OrderId);
 
 public record GetResponse(Order Order);
 
-public record Order(string Id);
+public record CartItem(string Id, string ProductId);
+
+public record Order(string Id, CartItem[] Cart);
 
 public class GetQuery : IGetQuery
 {
@@ -20,7 +22,10 @@ public class GetQuery : IGetQuery
         var order = await _ordersRepository.Get(request.OrderId, ct);
         return new GetResponse(
             Order: new Order(
-                Id: order.Id
+                Id: order.Id,
+                Cart: order.Cart
+                    .Select(x => new CartItem(x.Id, x.ProductId))
+                    .ToArray()
             )
         );
     }

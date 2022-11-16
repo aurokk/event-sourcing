@@ -1,5 +1,4 @@
 using EventStore.Client;
-using Orders.Api;
 using Orders.Api.Commands.AddToCart;
 using Orders.Api.Commands.Checkout;
 using Orders.Api.Commands.Create;

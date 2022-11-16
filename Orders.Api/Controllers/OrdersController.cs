@@ -29,7 +29,10 @@ public record GetRequest(string OrderId);
 
 public record GetResponse(GetResponse.OrderDto Order)
 {
-    public record OrderDto(string Id);
+    public record OrderDto(string Id, OrderDto.CartItemDto[] Cart)
+    {
+        public record CartItemDto(string Id, string ProductId);
+    }
 }
 
 #endregion
@@ -105,7 +108,10 @@ public class OrdersController : ControllerBase
         var queryResponse = await query.Execute(queryRequest, ct);
         var response = new GetResponse(
             Order: new GetResponse.OrderDto(
-                Id: queryResponse.Order.Id
+                Id: queryResponse.Order.Id,
+                Cart: queryResponse.Order.Cart
+                    .Select(x => new GetResponse.OrderDto.CartItemDto(x.Id, x.ProductId))
+                    .ToArray()
             )
         );
         return Ok(response);
