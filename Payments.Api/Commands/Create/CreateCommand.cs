@@ -13,10 +13,14 @@ public class CreateCommand : ICreateCommand
         _paymentsRepository = paymentsRepository;
     }
 
-    public async Task<CreateCommandResult> Execute(CancellationToken ct)
+    public async Task<CreateCommandResult> Execute(
+        string referenceId,
+        decimal amount,
+        int currencyCode,
+        CancellationToken ct)
     {
         var paymentId = Guid.NewGuid().ToString("N");
-        var payment = Payment.Create(paymentId, DateTime.UtcNow);
+        var payment = Payment.Create(paymentId, referenceId, amount, currencyCode, DateTime.UtcNow);
         await _paymentsRepository.Save(payment, ct);
         return new CreateCommandResult(paymentId);
     }

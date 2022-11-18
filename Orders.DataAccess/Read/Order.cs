@@ -13,16 +13,19 @@ public class Order
 {
     public string Id { get; }
     public OrderStatus OrderStatus { get; private set; }
-    public string? ChangeVector { get; private set; }
     private readonly List<CartItem> _cart;
     public CartItem[] Cart => _cart.ToArray();
 
-    private Order(string id, string? changeVector, OrderStatus orderStatus, List<CartItem> cartItems)
+    public string? PaymentId { get; private set; }
+    public string? ChangeVector { get; private set; }
+
+    private Order(string id, string? changeVector, OrderStatus orderStatus, List<CartItem> cartItems, string? paymentId)
     {
         Id = id;
         ChangeVector = changeVector;
         OrderStatus = orderStatus;
         _cart = cartItems;
+        PaymentId = paymentId;
     }
 
     public static Order Create(string id) =>
@@ -30,20 +33,23 @@ public class Order
             id: id,
             changeVector: null,
             orderStatus: OrderStatus.Initialized,
-            cartItems: new List<CartItem>()
+            cartItems: new List<CartItem>(),
+            paymentId: null
         );
 
     public static Order FromDatabase(
         string id,
         string changeVector,
         OrderStatus orderStatus,
-        List<CartItem> cartItems
+        List<CartItem> cartItems,
+        string? paymentId
     ) =>
         new Order(
             id: id,
             changeVector: changeVector,
             orderStatus: orderStatus,
-            cartItems: cartItems
+            cartItems: cartItems,
+            paymentId: paymentId
         );
 
     public void AddItemToCart(string productId, string cartItemId)
@@ -56,9 +62,15 @@ public class Order
         _cart.RemoveAll(x => x.Id == cartItemId);
     }
 
-    public void Checkout()
+    public void Checkout(string paymentId)
     {
+        PaymentId = paymentId;
         OrderStatus = OrderStatus.Placed;
+    }
+
+    public void Paid()
+    {
+        OrderStatus = OrderStatus.Paid;
     }
 
     public void Commit(string changeVector)

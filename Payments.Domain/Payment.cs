@@ -15,15 +15,16 @@ public enum PaymentStatus
 public class Payment : Aggregate
 {
     private PaymentStatus Status = PaymentStatus.Uninitialized;
+    public string? ReferenceId { get; private set; }
 
     public Payment()
     {
     }
 
-    public static Payment Create(string id, DateTime utcNow)
+    public static Payment Create(string id, string referenceId, decimal amount, int currencyCode, DateTime utcNow)
     {
         var payment = new Payment();
-        var @event = new PaymentCreated(id, utcNow);
+        var @event = new PaymentCreated(id, referenceId, amount, currencyCode, utcNow);
         payment.ApplyEvent(@event);
         return payment;
     }
@@ -53,6 +54,7 @@ public class Payment : Aggregate
     protected void Apply(PaymentCreated @event)
     {
         Id = @event.AggregateId;
+        ReferenceId = @event.ReferenceId;
         Status = PaymentStatus.Initialized;
     }
 

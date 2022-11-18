@@ -1,4 +1,6 @@
 using EventStore.Client;
+using MassTransit;
+using Orders.Api;
 using Orders.Api.Commands.AddToCart;
 using Orders.Api.Commands.Checkout;
 using Orders.Api.Commands.Create;
@@ -22,6 +24,9 @@ services
 
 services
     .AddScoped<IOrdersRepository, OrdersRepository>();
+
+services
+    .AddHttpClient<IPaymentsClient, PaymentsClient>();
 
 services
     .AddScoped<Orders.DataAccess.Read.IOffsetsRepository, Orders.DataAccess.Read.OffsetsRepository>()
@@ -72,6 +77,22 @@ services
         store.Initialize();
         return store;
     });
+
+services.AddMassTransit(x =>
+{
+    x.AddConsumer<PaymentFulfilledNotificationConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("user");
+            h.Password("password");
+        });
+
+        cfg.ReceiveEndpoint("orders", e => e.ConfigureConsumer<PaymentFulfilledNotificationConsumer>(context));
+    });
+});
 
 services
     .AddSwaggerGen();

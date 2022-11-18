@@ -5,7 +5,7 @@ using LightBDD.Framework.Scenarios;
 using LightBDD.NUnit3;
 using Newtonsoft.Json;
 
-namespace Orders.E2eTests;
+namespace E2eTests;
 
 [UsedImplicitly]
 public class Tests_000Context
@@ -20,6 +20,7 @@ public class Tests_000Context
     private static readonly Uri _ordersGetUri = new Uri(_ordersBaseUri, "/orders");
 
     private static readonly Uri _paymentsBaseUri = new Uri("http://localhost:5249");
+    private static readonly Uri _paymentsAuthorizeUri = new Uri(_paymentsBaseUri, "/payments/authorize");
 
     public Tests_000Context()
     {
@@ -44,7 +45,7 @@ public class Tests_000Context
 
     public async Task AddItemToCart()
     {
-        var message = new HttpRequestMessage
+        var requestMessage = new HttpRequestMessage
         {
             Content = CreateJsonContent(new
             {
@@ -54,7 +55,8 @@ public class Tests_000Context
             Method = HttpMethod.Post,
             RequestUri = _ordersAddToCartUri,
         };
-        await _httpClient.SendAsync(message);
+        var responseMessage = await _httpClient.SendAsync(requestMessage);
+        responseMessage.EnsureSuccessStatusCode();
     }
 
     private OrderDto? _order;
@@ -76,7 +78,7 @@ public class Tests_000Context
     {
         var cartItemId = _order?.Cart?.FirstOrDefault()?.Id ?? throw new ApplicationException();
 
-        var request = new HttpRequestMessage
+        var requestMessage = new HttpRequestMessage
         {
             Content = CreateJsonContent(new
             {
@@ -87,18 +89,48 @@ public class Tests_000Context
             RequestUri = _ordersDeleteFromCartUri,
         };
 
-        await _httpClient.SendAsync(request);
+        var responseMessage = await _httpClient.SendAsync(requestMessage);
+        responseMessage.EnsureSuccessStatusCode();
     }
 
     public async Task Checkout()
     {
-        var message = new HttpRequestMessage
+        Assert.That(_order?.Id, Is.Not.Null);
+
+        var requestMessage = new HttpRequestMessage
         {
-            Content = CreateJsonContent(new { }),
+            Content = CreateJsonContent(new
+            {
+                OrderId = _order?.Id,
+            }),
             Method = HttpMethod.Post,
             RequestUri = _ordersCheckoutUri,
         };
-        await _httpClient.SendAsync(message);
+        var responseMessage = await _httpClient.SendAsync(requestMessage);
+        responseMessage.EnsureSuccessStatusCode();
+    }
+
+    public async Task Authorize()
+    {
+        Assert.That(_order?.PaymentId, Is.Not.Null);
+
+        var requestMessage = new HttpRequestMessage
+        {
+            Content = CreateJsonContent(new
+            {
+                PaymentId = _order?.PaymentId,
+            }),
+            Method = HttpMethod.Post,
+            RequestUri = _paymentsAuthorizeUri,
+        };
+        var responseMessage = await _httpClient.SendAsync(requestMessage);
+        responseMessage.EnsureSuccessStatusCode();
+    }
+
+    public Task Check()
+    {
+        Assert.That(_order?.OrderStatus, Is.EqualTo("Paid"));
+        return Task.CompletedTask;
     }
 
     private static HttpContent CreateJsonContent(object data)
@@ -134,6 +166,8 @@ public class OrderDto
 {
     public string? Id { get; set; }
     public CartItemDto[]? Cart { get; set; }
+    public string? PaymentId { get; set; }
+    public string? OrderStatus { get; set; }
 }
 
 [PublicAPI]
@@ -158,7 +192,13 @@ public class Tests_000 : FeatureFixture
                 c => Task.Delay(1000),
                 c => c.GetOrder(),
                 c => c.DeleteItemFromCart(),
-                c => c.Checkout()
+                c => c.Checkout(),
+                c => Task.Delay(1000),
+                c => c.GetOrder(),
+                c => c.Authorize(),
+                c => Task.Delay(10000),
+                c => c.GetOrder(),
+                c => c.Check()
             );
     }
 }

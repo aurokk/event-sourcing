@@ -20,7 +20,7 @@ public class CheckoutCommand : ICheckoutCommand
     public async Task<CheckoutCommandResponse> Execute(CheckoutCommandRequest request, CancellationToken ct)
     {
         var order = await _ordersRepository.Get(request.OrderId, ct);
-        await order.Place(_paymentsClient, DateTime.UtcNow, ct);
+        await order.Checkout(_paymentsClient, DateTime.UtcNow, ct);
         await _ordersRepository.Save(order, ct);
         return new CheckoutCommandResponse();
     }

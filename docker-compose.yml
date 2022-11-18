@@ -61,9 +61,37 @@ services:
         source: payments-eventstore-volume-logs
         target: /var/log/eventstore
 
+  payments-raven:
+    image: ravendb/ravendb:5.4.4-ubuntu.20.04-arm64v8
+    ports:
+      - "8081:8080"
+      - "38889:38888"
+    environment:
+      - RAVEN_Setup_Mode=None
+      - RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork
+      - RAVEN_License_Eula_Accepted=true
+    volumes:
+      - type: volume
+        source: payments-raven-volume-data
+        target: /opt/RavenDB/Server/RavenData
+
+  rabbitmq:
+    image: arm64v8/rabbitmq:3-management
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq:/var/lib/rabbitmq'
+
 volumes:
   orders-eventstore-volume-data:
   orders-eventstore-volume-logs:
   orders-raven-volume-data:
   payments-eventstore-volume-data:
   payments-eventstore-volume-logs:
+  payments-raven-volume-data:
+  rabbitmq:

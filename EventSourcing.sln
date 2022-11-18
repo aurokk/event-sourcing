@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2eTests", "E2eTests\E2eTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders.PaymentsClient", "Orders.PaymentsClient\Orders.PaymentsClient.csproj", "{6AA5D971-26A7-432F-9632-85A736DC4556}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payments.Contracts", "Payments.Contracts\Payments.Contracts.csproj", "{3660E57C-A86B-4C88-951C-C249883D5394}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +68,9 @@ Global
 		{6AA5D971-26A7-432F-9632-85A736DC4556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AA5D971-26A7-432F-9632-85A736DC4556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AA5D971-26A7-432F-9632-85A736DC4556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3660E57C-A86B-4C88-951C-C249883D5394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3660E57C-A86B-4C88-951C-C249883D5394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3660E57C-A86B-4C88-951C-C249883D5394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3660E57C-A86B-4C88-951C-C249883D5394}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

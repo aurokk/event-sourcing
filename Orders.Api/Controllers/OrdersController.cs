@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Api.Commands.AddToCart;
 using Orders.Api.Commands.Checkout;
@@ -9,28 +10,39 @@ namespace Orders.Api.Controllers;
 
 #region Dto
 
+[PublicAPI]
 public record CreateRequest;
 
+[PublicAPI]
 public record CreateResponse(string OrderId);
 
+[PublicAPI]
 public record AddToCartRequest(string OrderId, string ProductId);
 
+[PublicAPI]
 public record AddToCartResponse;
 
+[PublicAPI]
 public record DeleteFromCartRequest(string OrderId, string CartItemId);
 
 public record DeleteFromCartResponse;
 
+[PublicAPI]
 public record CheckoutRequest(string OrderId);
 
+[PublicAPI]
 public record CheckoutResponse;
 
+[PublicAPI]
 public record GetRequest(string OrderId);
 
+[PublicAPI]
 public record GetResponse(GetResponse.OrderDto Order)
 {
-    public record OrderDto(string Id, OrderDto.CartItemDto[] Cart)
+    [PublicAPI]
+    public record OrderDto(string Id, OrderDto.CartItemDto[] Cart, string OrderStatus, string? PaymentId)
     {
+        [PublicAPI]
         public record CartItemDto(string Id, string ProductId);
     }
 }
@@ -111,7 +123,9 @@ public class OrdersController : ControllerBase
                 Id: queryResponse.Order.Id,
                 Cart: queryResponse.Order.Cart
                     .Select(x => new GetResponse.OrderDto.CartItemDto(x.Id, x.ProductId))
-                    .ToArray()
+                    .ToArray(),
+                PaymentId: queryResponse.Order.PaymentId,
+                OrderStatus: queryResponse.Order.OrderStatus
             )
         );
         return Ok(response);

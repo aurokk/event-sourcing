@@ -6,7 +6,7 @@ using Payments.Api.Commands.Create;
 namespace Payments.Api.Controllers;
 
 [PublicAPI]
-public record CreateRequest;
+public record CreateRequest(string ReferenceId, decimal Amount, int CurrencyCode);
 
 [PublicAPI]
 public record CreateResponse(string PaymentId);
@@ -20,15 +20,20 @@ public record AuthorizeResponse;
 [ApiController]
 public class PaymentsController : ControllerBase
 {
+    [HttpPost]
+    [Route("payments/create")]
     public async Task<IActionResult> Create(
         [FromServices] ICreateCommand command,
+        [FromBody] CreateRequest request,
         CancellationToken ct)
     {
-        var result = await command.Execute(ct);
+        var result = await command.Execute(request.ReferenceId, request.Amount, request.CurrencyCode, ct);
         var response = new CreateResponse(result.PaymentId);
         return Ok(response);
     }
 
+    [HttpPost]
+    [Route("payments/authorize")]
     public async Task<IActionResult> Authorize(
         [FromServices] IAuthorizeCommand command,
         [FromBody] AuthorizeRequest request,

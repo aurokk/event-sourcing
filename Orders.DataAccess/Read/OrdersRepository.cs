@@ -54,7 +54,8 @@ public class OrdersRepository : IOrdersRepository
                                )
                            )
                            .ToList() ??
-                       new List<CartItem>()
+                       new List<CartItem>(),
+            paymentId: orderDto.PaymentId
         );
 
     private static OrderDto ToDto(Order order) =>
@@ -68,6 +69,7 @@ public class OrdersRepository : IOrdersRepository
                     Id = x.Id,
                     ProductId = x.ProductId,
                 })
-                .ToList()
+                .ToList(),
+            PaymentId = order.PaymentId,
         };
 }

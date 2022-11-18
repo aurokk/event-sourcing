@@ -8,7 +8,7 @@ public record GetResponse(Order Order);
 
 public record CartItem(string Id, string ProductId);
 
-public record Order(string Id, CartItem[] Cart);
+public record Order(string Id, CartItem[] Cart, string? PaymentId, string OrderStatus);
 
 public class GetQuery : IGetQuery
 {
@@ -25,7 +25,9 @@ public class GetQuery : IGetQuery
                 Id: order.Id,
                 Cart: order.Cart
                     .Select(x => new CartItem(x.Id, x.ProductId))
-                    .ToArray()
+                    .ToArray(),
+                PaymentId: order.PaymentId,
+                OrderStatus: order.OrderStatus.ToString("G")
             )
         );
     }

@@ -8,10 +8,13 @@
 
     <ItemGroup>
       <PackageReference Include="EventStore.Client.Grpc.Streams" Version="22.0.0" />
+      <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.8" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Payments.Contracts\Payments.Contracts.csproj" />
+      <ProjectReference Include="..\Payments.DataAccess\Payments.DataAccess.csproj" />
       <ProjectReference Include="..\Payments.Domain\Payments.Domain.csproj" />
     </ItemGroup>
 

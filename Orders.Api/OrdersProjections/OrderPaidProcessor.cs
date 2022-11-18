@@ -19,8 +19,15 @@ public class OrderPaidProcessor : IEventProcessor
     public bool CanProcess(EventRecord eventRecord) =>
         eventRecord.EventType == OrderPaid.Type;
 
-    public Task Process(EventRecord eventRecord, CancellationToken ct)
+    public async Task Process(EventRecord eventRecord, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        if (_mapper.Map(eventRecord) is not OrderPaid domainEvent)
+        {
+            throw new Exception();
+        }
+
+        var order = await _ordersRepository.Get(domainEvent.AggregateId, ct);
+        order.Paid();
+        await _ordersRepository.Update(order, ct);
     }
 }

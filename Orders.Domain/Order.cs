@@ -60,7 +60,7 @@ public class Order : Aggregate
             throw new InvalidOperationException($"Order must be in {nameof(OrderStatus.Initialized)} status");
         }
 
-        if (_cart.All(x => x.ProductId != cartItemId))
+        if (_cart.All(x => x.Id != cartItemId))
         {
             throw new InvalidOperationException($"Order must contain at least one item with product id {cartItemId}");
         }
@@ -74,7 +74,7 @@ public class Order : Aggregate
         ApplyEvent(@event);
     }
 
-    public async Task Place(IPaymentsClient paymentsClient, DateTime utcNow, CancellationToken ct)
+    public async Task Checkout(IPaymentsClient paymentsClient, DateTime utcNow, CancellationToken ct)
     {
         if (Status != OrderStatus.Initialized)
         {

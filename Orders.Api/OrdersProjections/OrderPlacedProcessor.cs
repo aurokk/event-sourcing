@@ -27,7 +27,7 @@ public class OrderPlacedProcessor : IEventProcessor
         }
 
         var order = await _ordersRepository.Get(domainEvent.AggregateId, ct);
-        order.Checkout();
+        order.Checkout(domainEvent.PaymentId);
         await _ordersRepository.Update(order, ct);
     }
 }

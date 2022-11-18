@@ -1,10 +1,10 @@
-namespace Orders.Api.OrdersProjections;
+namespace Payments.Api.Authorizer;
 
-public class OrdersProjectionsBackgroundService : BackgroundService
+public class AuthorizerBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public OrdersProjectionsBackgroundService(IServiceScopeFactory serviceScopeFactory)
+    public AuthorizerBackgroundService(IServiceScopeFactory serviceScopeFactory)
     {
         _serviceScopeFactory = serviceScopeFactory;
     }
@@ -13,7 +13,7 @@ public class OrdersProjectionsBackgroundService : BackgroundService
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var serviceProvider = scope.ServiceProvider;
-        var svc = serviceProvider.GetRequiredService<OrdersProjectionsService>();
+        var svc = serviceProvider.GetRequiredService<AuthorizerService>();
         await svc.Run(stoppingToken);
     }
 }
