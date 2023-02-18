@@ -1,0 +1,9 @@
+**/bin
+**/node_modules
+**/obj
+**/out
+.idea
+.git
+.github
+.vscode
+docs

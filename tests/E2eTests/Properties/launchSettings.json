@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "E2eTests#local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PaymentsApi__Host": "http://localhost:5249",
+        "OrdersApi__Host": "http://localhost:5142"
+      }
+    }
+  }
+}

@@ -1,0 +1,180 @@
+version: '3.9'
+
+services:
+  orders-eventstore:
+    image: ghcr.io/eventstore/eventstore:21.10.2-alpha-arm64v8
+    restart: always
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    volumes:
+      - type: volume
+        source: orders-eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: orders-eventstore-volume-logs
+        target: /var/log/eventstore
+
+  orders-mongo:
+    image: mongo:6.0.4-jammy
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: orders
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: orders-mongo-volume-data
+        target: /data/db
+    healthcheck:
+      test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  orders-api:
+    image: orders-api:latest
+    build:
+      dockerfile: dockerfile
+      target: orders-api
+      context: .
+    restart: always
+    environment:
+      - ASPNETCORE_URLS=http://+:3000
+      - WriteDb__ConnectionString=esdb://admin:changeit@orders-eventstore:2113?tls=false
+      - ReadDb__ConnectionString=mongodb://user:password@orders-mongo:27017
+      - RabbitMq__ConnectionString=rabbitmq://user:password@rabbitmq:5672/vhost
+      - PaymentsApi__Host=http://payments-api:3000
+    ports:
+      - "30000:3000"
+    depends_on:
+      payments-api:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      orders-mongo:
+        condition: service_healthy
+      orders-eventstore:
+        condition: service_healthy
+
+  payments-eventstore:
+    image: ghcr.io/eventstore/eventstore:21.10.2-alpha-arm64v8
+    restart: always
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1123:1113"
+      - "2123:2113"
+    volumes:
+      - type: volume
+        source: payments-eventstore-volume-data
+        target: /var/lib/eventstore
+      - type: volume
+        source: payments-eventstore-volume-logs
+        target: /var/log/eventstore
+  
+  payments-mongo:
+    image: mongo:6.0.4-jammy
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: payments
+    ports:
+      - "27027:27017"
+    volumes:
+      - type: volume
+        source: payments-mongo-volume-data
+        target: /data/db
+    healthcheck:
+      test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  payments-api:
+    image: payments-api:latest
+    build:
+      dockerfile: dockerfile
+      target: payments-api
+      context: .
+    restart: always
+    environment:
+      - ASPNETCORE_URLS=http://+:3000
+      - WriteDb__ConnectionString=esdb://admin:changeit@payments-eventstore:2113?tls=false
+      - ReadDb__ConnectionString=mongodb://user:password@payments-mongo:27017
+      - RabbitMq__ConnectionString=rabbitmq://user:password@rabbitmq:5672/vhost
+    ports:
+      - "30010:3000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      payments-mongo:
+        condition: service_healthy
+      payments-eventstore:
+        condition: service_healthy
+
+  rabbitmq:
+    image: arm64v8/rabbitmq:3-management
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_DEFAULT_VHOST=vhost
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 30s
+      timeout: 30s
+      retries: 10
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq:/var/lib/rabbitmq'
+
+  e2e-tests:
+    image: e2e-tests:latest
+    build:
+      dockerfile: Dockerfile
+      target: e2e-tests
+      context: .
+    restart: 'no'
+    environment:
+      - PaymentsApi__Host=http://payments-api:3000
+      - OrdersApi__Host=http://orders-api:3000
+    entrypoint: |
+      /bin/sh -c 'sleep 10; dotnet E2eTests.dll --where "cat=E2E"'
+    depends_on:
+      payments-api:
+        condition: service_started
+      orders-api:
+        condition: service_started
+
+volumes:
+  orders-eventstore-volume-data:
+  orders-eventstore-volume-logs:
+  orders-mongo-volume-data:
+  payments-eventstore-volume-data:
+  payments-eventstore-volume-logs:
+  payments-mongo-volume-data:
+  rabbitmq:

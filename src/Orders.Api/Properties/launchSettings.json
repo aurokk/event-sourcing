@@ -1,0 +1,17 @@
+﻿{
+  "profiles": {
+    "Orders.Api#local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5142",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "WriteDb__ConnectionString": "esdb://admin:changeit@localhost:2113?tls=false",
+        "ReadDb__ConnectionString": "mongodb://user:password@localhost:27017",
+        "RabbitMq__ConnectionString": "rabbitmq://user:password@localhost:5672/vhost",
+        "PaymentsApi__Host": "http://localhost:5249"
+      }
+    }
+  }
+}
